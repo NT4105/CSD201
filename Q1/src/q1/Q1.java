@@ -6,7 +6,7 @@ public class Q1 {
         Node p = new Node();
         MyList list = new MyList();
 
-        list.addToTail(6);
+        list.addToHead(6);
         list.addToHead(4);
         list.addToTail(5);
         list.addToHead(7);
@@ -17,7 +17,7 @@ public class Q1 {
         System.out.print("Created list: ");
         list.display();
 
-        int count = list.count();
+        int count = list.size();
 
         System.out.println("Numbers of nodes in the list: " + count);
 
@@ -27,7 +27,9 @@ public class Q1 {
         list.display();
 
         // Traverse from head to tail and display info of all nodes in the list
+        System.out.print("Traverse from head to tail: ");
         list.traverse();
+        System.out.println();
 
         // Count and return number of nodes in the list
         System.out.println("Numbers of nodes in the list: " + count);

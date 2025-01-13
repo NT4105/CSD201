@@ -48,7 +48,7 @@ public class MyList {
     public void traverse() {
         Node p = head;
         while (p != null) {
-            System.out.println(p.info);
+            System.out.print(p.info + " ");
             p = p.next;
         }
     }
@@ -290,8 +290,9 @@ public class MyList {
     public void display() {
         Node p = head;
         while (p != null) {
-            System.out.println(p.info);
+            System.out.print(p.info + " ");
             p = p.next;
         }
+        System.out.println();
     }
 }
