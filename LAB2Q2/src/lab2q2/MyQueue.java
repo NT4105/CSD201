@@ -1,3 +1,5 @@
+package lab2q2;
+
 public class MyQueue {
     private Node front;
     private Node rear;

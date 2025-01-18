@@ -1,3 +1,5 @@
+package lab2q2;
+
 public class Node {
     private int data;
     private Node next;
