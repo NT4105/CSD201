@@ -24,178 +24,239 @@ public class BSTree {
         root = null;
     }
 
+    public void visit(Node p) {
+        if (p == null)
+            return;
+        System.out.print(p.info + " ");
+    }
+
+    // search for a node with value x
     public Node search(int x) {
-        return searchRec(root, x);
+        return search(root, x);
     }
 
-    private Node searchRec(Node root, int x) {
-        if (root == null || root.info == x) {
-            return root;
-        }
-        return x < root.info ? searchRec(root.left, x) : searchRec(root.right, x);
+    private Node search(Node p, int key) {
+        if (p == null)
+            return null;
+        if (p.info == key)
+            return p;
+        else if (p.info > key)
+            return search(p.left, key);
+        else
+            return search(p.right, key);
     }
 
+    // insert a key x to the tree
     public void insert(int x) {
-        if (search(x) == null) {
-            root = insertRec(root, x);
-        }
-    }
-
-    private Node insertRec(Node root, int x) {
-        if (root == null) {
-            return new Node(x);
-        }
-        if (x < root.info) {
-            root.left = insertRec(root.left, x);
-        } else {
-            root.right = insertRec(root.right, x);
-        }
-        return root;
-    }
-
-    public void breadth() {
-        MyQueue queue = new MyQueue();
-        queue.enqueue(root);
-        while (!queue.isEmpty()) {
-            Node current = (Node) queue.dequeue();
-            if (current != null) {
-                System.out.print(current.info + " ");
-                queue.enqueue(current.left);
-                queue.enqueue(current.right);
+        Node p = new Node(x);
+        Node f = null, q = root;
+        while (q != null) {
+            if (q.info == x) {
+                System.out.println("Key cannot be duplicated...");
+                return;
+            }
+            if (q.info < x) {
+                f = q;
+                q = q.right;
+            } else {
+                f = q;
+                q = q.left;
             }
         }
+        if (f == null)
+            root = p;
+        else if (p.info > f.info)
+            f.right = p;
+        else
+            f.left = p;
     }
 
+    // preorder a tree
     public void preOrder(Node p) {
-        if (p != null) {
-            System.out.print(p.info + " ");
-            preOrder(p.left);
-            preOrder(p.right);
+        if (p == null)
+            return;
+        visit(p);
+        preOrder(p.left);
+        preOrder(p.right);
+    }
+
+    // postorder a tree
+    public void postOrder(Node p) {
+        if (p == null)
+            return;
+        postOrder(p.left);
+        postOrder(p.right);
+        visit(p);
+    }
+
+    // inorder a tree
+    public void inOrder(Node p) {
+        if (p == null)
+            return;
+        inOrder(p.left);
+        visit(p);
+        inOrder(p.right);
+    }
+
+    // bft
+    public void BFT(Node p) {
+        if (p == null)
+            return;
+        MyQueue m = new MyQueue();
+        m.enqueue(p);
+        while (!m.isEmpty()) {
+            Node q = (Node) m.dequeue();
+            visit(q);
+            if (q.left != null)
+                m.enqueue(q.left);
+            if (q.right != null)
+                m.enqueue(q.right);
         }
     }
 
-    public void inorder(Node p) {
-        if (p != null) {
-            inorder(p.left);
-            System.out.print(p.info + " ");
-            inorder(p.right);
-        }
-    }
-
-    public void postorder(Node p) {
-        if (p != null) {
-            postorder(p.left);
-            postorder(p.right);
-            System.out.print(p.info + " ");
-        }
-    }
-
+    // count the number of nodes in the tree
     public int count() {
-        return countRec(root);
+        return count(root);
     }
 
-    private int countRec(Node p) {
-        if (p == null) {
-            return 0;
-        }
-        return 1 + countRec(p.left) + countRec(p.right);
-    }
-
-    public void dele(int x) {
-        root = deleRec(root, x);
-    }
-
-    private Node deleRec(Node root, int x) {
-        if (root == null)
-            return root;
-        if (x < root.info) {
-            root.left = deleRec(root.left, x);
-        } else if (x > root.info) {
-            root.right = deleRec(root.right, x);
-        } else {
-            if (root.left == null)
-                return root.right;
-            else if (root.right == null)
-                return root.left;
-            root.info = min().info;
-            root.right = deleRec(root.right, root.info);
-        }
-        return root;
-    }
-
-    public Node min() {
-        return minRec(root);
-    }
-
-    private Node minRec(Node root) {
-        return root.left == null ? root : minRec(root.left);
-    }
-
-    public Node max() {
-        return maxRec(root);
-    }
-
-    private Node maxRec(Node root) {
-        return root.right == null ? root : maxRec(root.right);
-    }
-
-    public int sum() {
-        return sumRec(root);
-    }
-
-    private int sumRec(Node p) {
+    private int count(Node p) {
         if (p == null)
             return 0;
-        return p.info + sumRec(p.left) + sumRec(p.right);
+        return 1 + count(p.left) + count(p.right);
     }
 
-    public int avg() {
+    // delete a node with value x
+    public void dele(int x) {
+        root = dele(root, x);
+    }
+
+    private Node dele(Node p, int x) {
+        if (p == null)
+            return null;
+        if (x < p.info) {
+            p.left = dele(p.left, x);
+        } else if (x > p.info) {
+            p.right = dele(p.right, x);
+        } else {
+            // Node with only one child or no child
+            if (p.left == null)
+                return p.right;
+            else if (p.right == null)
+                return p.left;
+
+            // Node with two children: Get the inorder successor (smallest in the right
+            // subtree)
+            p.info = min(p.right).info;
+            p.right = dele(p.right, p.info);
+        }
+        return p;
+    }
+
+    // find the node with minimum value
+    public Node min() {
+        return min(root);
+    }
+
+    private Node min(Node p) {
+        if (p.left == null)
+            return p;
+        return min(p.left);
+    }
+
+    // find the node with maximum value
+    public Node max() {
+        return max(root);
+    }
+
+    private Node max(Node p) {
+        if (p.right == null)
+            return p;
+        return max(p.right);
+    }
+
+    // calculate the sum of all values in the tree
+    public int sum() {
+        return sum(root);
+    }
+
+    private int sum(Node p) {
+        if (p == null)
+            return 0;
+        return p.info + sum(p.left) + sum(p.right);
+    }
+
+    // calculate the average of all values in the tree
+    public double avg() {
         int total = sum();
         int count = count();
-        return count == 0 ? 0 : total / count;
+        return count == 0 ? 0 : (double) total / count;
     }
 
+    // height of the tree
     public int height() {
-        return heightRec(root);
+        return height(root);
     }
 
-    private int heightRec(Node p) {
-        if (p == null)
-            return -1;
-        return 1 + Math.max(heightRec(p.left), heightRec(p.right));
+    // cost of the most expensive path from root to leaf
+    public int cost() {
+        return cost(root);
     }
 
-    public int maxPathCost() {
-        return maxPathCostRec(root);
-    }
-
-    private int maxPathCostRec(Node p) {
+    private int cost(Node p) {
         if (p == null)
             return 0;
-        return p.info + Math.max(maxPathCostRec(p.left), maxPathCostRec(p.right));
+        return p.info + Math.max(cost(p.left), cost(p.right));
     }
 
+    // check if the tree is AVL
     public boolean isAVL() {
-        return isAVLRec(root) != -1;
+        return isAVL(root);
     }
 
-    private int isAVLRec(Node node) {
-        if (node == null)
-            return 0;
-        int leftHeight = isAVLRec(node.left);
-        int rightHeight = isAVLRec(node.right);
-        if (leftHeight == -1 || rightHeight == -1 || Math.abs(leftHeight - rightHeight) > 1) {
-            return -1;
-        }
-        return Math.max(leftHeight, rightHeight) + 1;
-    }
-
-    public boolean isHeap() {
-        return isHeapRec(root);
-    }
-
-    private boolean isHeapRec(Node node) {
-        // Implement heap check logic
+    private boolean isAVL(Node p) {
+        // Implement AVL checking logic here
         return true; // Placeholder
+    }
+
+    // height of tree
+    int height(Node p) {
+        if (p == null) {
+            return 0;
+        } else {
+            int lDepth = height(p.left);// compute the depth of each subtree
+            int rDepth = height(p.right);
+            if (lDepth > rDepth)
+                return (lDepth + 1);// use the larger one
+            else
+                return (rDepth + 1);
+        }
+    }
+
+    // breadth-first traversal of the tree
+    public void breadth() {
+        BFT(root);
+    }
+
+    // check if the tree is a heap
+    public boolean isHeap() {
+        return isHeap(root);
+    }
+
+    private boolean isHeap(Node p) {
+        if (p == null)
+            return true;
+        if (p.left != null && p.left.info > p.info)
+            return false;
+        if (p.right != null && p.right.info > p.info)
+            return false;
+        return isHeap(p.left) && isHeap(p.right);
+    }
+
+    // mystery function
+    public int mystery(Node x) {
+        if (x == null)
+            return 0;
+        else
+            return Math.max(mystery(x.left), mystery(x.right));
     }
 }
