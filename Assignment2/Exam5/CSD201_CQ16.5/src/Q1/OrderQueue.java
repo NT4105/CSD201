@@ -1,3 +1,5 @@
+package Q1;
+
 public class OrderQueue {
     private OrderNode front, rear;
 
