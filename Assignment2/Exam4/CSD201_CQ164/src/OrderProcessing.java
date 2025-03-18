@@ -31,11 +31,16 @@ class ItemList {
         }
     }
 
+    // Add new item to the end of the list
     void addLast(String name, int quantity , int price) {
-        //You should write here appropriate statements to complete this function.
-        //---------------------------------------------------------------------
-        
-        //---------------------------------------------------------------------
+        Item item = new Item(name, quantity, price);
+        Node node = new Node(item);
+        if (isEmpty()) {
+            head = tail = node;
+        } else {
+            tail.next = node;
+            tail = node;
+        }
     }
 }
 
@@ -64,19 +69,28 @@ class OrderQueue {
         }
     }
 
+    // Add new order to the end of the queue
     void enQueue(String name, int quantity ) {
-        //You should write here appropriate statements to complete this function.
-        //---------------------------------------------------------------------
-
-        //---------------------------------------------------------------------
+        Item item = new Item(name, quantity);
+        Node node = new Node(item);
+        if (isEmpty()) {
+            front = rear = node;
+        } else {
+            rear.next = node;
+            rear = node;
+        }
     }
 
+    // Remove and return the first order from the queue
     Item deQueue() {
-        Item tmp = new Item();
-        //You should write here appropriate statements to complete this function.
-        //--------------------------------------------------------
-
-        //---------------------------------------------------------
+        Item tmp = null;
+        if (!isEmpty()) {
+            tmp = front.info;
+            front = front.next;
+            if (front == null) {
+                rear = null;
+            }
+        }
         return tmp;
     }
 }
@@ -136,13 +150,21 @@ class OrderProcessing {
         f.close();
     }
 
+    // Check if the item can be purchased and update quantity
     int purchase(Item t) throws Exception {
-        int r = 0;
-        //You should write here appropriate statements to complete this function.
-        //---------------------------------------------------------------------
-
-        //---------------------------------------------------------------------
-        return r;
+        if (t == null) return 0;
+        Node p = iList.head;
+        while (p != null) {
+            if (p.info.getName().equals(t.getName())) {
+                if (p.info.getQuantity() >= t.getQuantity()) {
+                    p.info.setQuantity(p.info.getQuantity() - t.getQuantity());
+                    return 1;
+                }
+                return 0;
+            }
+            p = p.next;
+        }
+        return 0;
     }
 
     void f2() throws Exception {
@@ -154,17 +176,13 @@ class OrderProcessing {
         }
         RandomAccessFile f = new RandomAccessFile(fname, "rw");
         ftraverse(f);
-        //---------------------------------------------------------------------
-        /*You must keep statements pre-given in this function.
-        Your task is to insert statements here, just after this comment,
-        to complete the question in the exam paper.*/
         
-//        Item t = oQueue.deQueue();
-//        if (t != null) {
-//            this.purchase(t);
-//        }
+        // Process the first order
+        Item t = oQueue.deQueue();
+        if (t != null) {
+            this.purchase(t);
+        }
         
-        //---------------------------------------------------------------------
         ftraverse(f);
         f.close();
     }
@@ -178,21 +196,37 @@ class OrderProcessing {
         }
         RandomAccessFile f = new RandomAccessFile(fname, "rw");
         ftraverse(f);
-        //---------------------------------------------------------------------
-        /*You must keep statements pre-given in this function.
-        Your task is to insert statements here, just after this comment,
-        to complete the question in the exam paper.*/
         
-        //---------------------------------------------------------------------
+        // Process all orders in the queue
+        while (!oQueue.isEmpty()) {
+            Item t = oQueue.deQueue();
+            if (t != null) {
+                this.purchase(t);
+            }
+        }
+        
         ftraverse(f);
         f.close();
     }
     
+    // Sort items by price in ascending order
     public void sortList() {
-        //You should write here appropriate statements to complete this function.
-        //---------------------------------------------------------------------
-
-        //---------------------------------------------------------------------
+        if (iList.head == null || iList.head.next == null) return;
+        
+        Node current = iList.head;
+        while (current != null) {
+            Node index = current.next;
+            while (index != null) {
+                if (current.info.getPrice() < index.info.getPrice()) {
+                    // Swap info
+                    Item temp = current.info;
+                    current.info = index.info;
+                    index.info = temp;
+                }
+                index = index.next;
+            }
+            current = current.next;
+        }
     }
 
     void f4() throws Exception {
@@ -204,16 +238,38 @@ class OrderProcessing {
         }
         RandomAccessFile f = new RandomAccessFile(fname, "rw");
         ftraverse(f);
-        int s = 0;
-        //---------------------------------------------------------------------
-        /*You must keep statements pre-given in this function.
-        Your task is to insert statements here, just after this comment,
-        to complete the question in the exam paper.*/
         
-        //---------------------------------------------------------------------
+        // Calculate total sales
+        int totalSales = 0;
+        Node[] originalQuantities = new Node[100];
+        int count = 0;
+        Node p = iList.head;
+        while (p != null) {
+            originalQuantities[count] = new Node(new Item(p.info.getName(), p.info.getQuantity(), p.info.getPrice()));
+            count++;
+            p = p.next;
+        }
+        
+        while (!oQueue.isEmpty()) {
+            Item t = oQueue.deQueue();
+            if (t != null) {
+                if (purchase(t) == 1) {
+                    // Find original quantity to calculate sales
+                    for (int i = 0; i < count; i++) {
+                        if (originalQuantities[i].info.getName().equals(t.getName())) {
+                            totalSales += t.getQuantity() * originalQuantities[i].info.getPrice();
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Sort items by price in ascending order
         sortList();
+        
         ftraverse(f);
-        f.writeBytes("Sales: " + s + " ");
+        f.writeBytes("Sales: " + totalSales + "\r\n");
         f.close();
-    }   
+    }
 }
