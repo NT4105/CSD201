@@ -71,8 +71,7 @@ class OrderQueue {
 
     // Add new order to the end of the queue
     void enQueue(String name, int quantity ) {
-        Item item = new Item(name, quantity);
-        Node node = new Node(item);
+        Node node = new Node(new Item(name, quantity));
         if (isEmpty()) {
             front = rear = node;
         } else {
