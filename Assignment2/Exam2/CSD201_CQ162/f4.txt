@@ -1,0 +1,5 @@
+Available items: (A,9,1500) (B,5,3000) (C,6,5000) (D,2,400) (E,7,9000) (F,6,7000) 
+Order list: (B,2) (F,6) (E,3) (A,4) (D,2) (G,6) (B,3) (A,7) 
+Available items: (A,5,1500) (C,6,5000) (E,4,9000) 
+Order list: Empty
+Items in stock: 3 
