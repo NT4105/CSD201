@@ -1,3 +1,4 @@
+
 /* This program contains 2 parts: (1) and (2)
    YOUR TASK IS TO COMPLETE THE PART  (2)  ONLY
  */
@@ -6,7 +7,7 @@ import java.io.*;
 
 class ItemList {
     ItemNode root;
-    
+
     ItemList() {
         root = null;
     }
@@ -18,47 +19,54 @@ class ItemList {
     void clear() {
         root = null;
     }
-    
+
     void fvisit(ItemNode p, RandomAccessFile f) throws Exception {
         if (p != null) {
             f.writeBytes(p.info + " ");
         }
     }
-    
-    public void preOrder(ItemNode p, RandomAccessFile f) throws Exception {       
-        if(p == null) 
+
+    public void preOrder(ItemNode p, RandomAccessFile f) throws Exception {
+        if (p == null)
             return;
-        fvisit(p,f);
-        preOrder(p.left,f);
-        preOrder(p.right,f);
+        fvisit(p, f);
+        preOrder(p.left, f);
+        preOrder(p.right, f);
     }
-    
-    void loadDataItem(int k) //do not edit this function
+
+    void loadDataItem(int k) // do not edit this function
     {
         String[] a = Lib.readLineToStrArray("data.txt", k);
         int[] b = Lib.readLineToIntArray("data.txt", k + 1);
-        int[] c = Lib.readLineToIntArray("data.txt", k + 2);      
+        int[] c = Lib.readLineToIntArray("data.txt", k + 2);
         int n = a.length;
         for (int i = 0; i < n; i++) {
             insert(a[i], b[i], c[i]);
         }
     }
-    
+
     ItemNode insertItem(ItemNode root, Item x) {
-        //You should insert here statements to complete this function
-        //---------------------------------------------------------------------
-        
-        //--------------------------------------------------------------------- 
+        // You should insert here statements to complete this function
+        // ---------------------------------------------------------------------
+        if (root == null) {
+            return new ItemNode(x);
+        }
+
+        int comp = x.getName().compareTo(root.info.getName());
+        if (comp < 0) {
+            root.left = insertItem(root.left, x);
+        } else if (comp > 0) {
+            root.right = insertItem(root.right, x);
+        }
+        // ---------------------------------------------------------------------
         return root;
     }
-    
+
     void insert(String xName, int xQuantity, int xPrice) {
-        //You should insert here statements to complete this function
-        //---------------------------------------------------------------------
-        
-//        this.root = insertItem(this.root, new Item(xName,xQuantity,xPrice)); 
-        
-	//---------------------------------------------------------------------       
+        // You should insert here statements to complete this function
+        // ---------------------------------------------------------------------
+        this.root = insertItem(this.root, new Item(xName, xQuantity, xPrice));
+        // ---------------------------------------------------------------------
     }
 }
 
@@ -77,7 +85,7 @@ class OrderQueue {
         front = rear = null;
     }
 
-    void loadDataOrder(int k) //do not edit this function
+    void loadDataOrder(int k) // do not edit this function
     {
         String[] a = Lib.readLineToStrArray("data.txt", k + 3);
         int[] b = Lib.readLineToIntArray("data.txt", k + 4);
@@ -88,18 +96,31 @@ class OrderQueue {
     }
 
     void enQueue(String name, int quantity) {
-        //You should insert here statements to complete this function
-        //---------------------------------------------------------------------
-        
-        //---------------------------------------------------------------------
+        // You should insert here statements to complete this function
+        // ---------------------------------------------------------------------
+        OrderNode node = new OrderNode(new Item(name, quantity));
+        if (isEmpty()) {
+            front = rear = node;
+        } else {
+            rear.next = node;
+            rear = node;
+        }
+        // ---------------------------------------------------------------------
     }
 
     Item deQueue() {
         Item tmp = new Item();
-        //You should write here statements to complete this function.
-        //---------------------------------------------------------------------
-        
-        //---------------------------------------------------------------------
+        // You should write here statements to complete this function.
+        // ---------------------------------------------------------------------
+        if (isEmpty()) {
+            return null;
+        }
+        tmp = front.info;
+        front = front.next;
+        if (front == null) {
+            rear = null;
+        }
+        // ---------------------------------------------------------------------
         return tmp;
     }
 }
@@ -127,16 +148,16 @@ class OrderProcessing {
         f.writeBytes("\r\n");
     }
 
-    void load(int k) throws Exception //do not edit this function
+    void load(int k) throws Exception // do not edit this function
     {
         iList.loadDataItem(k);
         oQueue.loadDataOrder(k);
     }
 
-//=============================================================================
-//========YOU CAN EDIT OR EVEN ADD NEW FUNCTIONS IN THE FOLLOWING PART=========
-//=============================================================================
-    
+    // =============================================================================
+    // ========YOU CAN EDIT OR EVEN ADD NEW FUNCTIONS IN THE FOLLOWING PART=========
+    // =============================================================================
+
     void f1() throws Exception {
         load(1);
         String fname = "f1.txt";
@@ -149,13 +170,26 @@ class OrderProcessing {
         f.close();
     }
 
-    void updateItemStock(ItemNode root, Item t) { 
-        //You should write here statements to complete this function.
-        //---------------------------------------------------------------------
-    
-        //---------------------------------------------------------------------
+    void updateItemStock(ItemNode root, Item t) {
+        // You should write here statements to complete this function.
+        // ---------------------------------------------------------------------
+        if (root == null || t == null)
+            return;
+
+        int comp = t.getName().compareTo(root.info.getName());
+        if (comp == 0) {
+            // Found matching item
+            if (root.info.getQuantity() >= t.getQuantity()) {
+                root.info.setQuantity(root.info.getQuantity() - t.getQuantity());
+            }
+        } else if (comp < 0) {
+            updateItemStock(root.left, t);
+        } else {
+            updateItemStock(root.right, t);
+        }
+        // ---------------------------------------------------------------------
     }
-    
+
     void f2() throws Exception {
         load(1);
         String fname = "f2.txt";
@@ -165,17 +199,19 @@ class OrderProcessing {
         }
         RandomAccessFile f = new RandomAccessFile(fname, "rw");
         ftraverse(f);
-        //---------------------------------------------------------------------
-        /*You must keep statements pre-given in this function.
-        Your task is to insert statements here, just after this comment,
-        to complete the question in the exam paper.*/   
-        
-//        Item t = oQueue.deQueue();
-//        if (t != null) {
-//            updateItemStock(iList.root, t);
-//        }
-        
-        //---------------------------------------------------------------------
+        // ---------------------------------------------------------------------
+        /*
+         * You must keep statements pre-given in this function.
+         * Your task is to insert statements here, just after this comment,
+         * to complete the question in the exam paper.
+         */
+
+        Item t = oQueue.deQueue();
+        if (t != null) {
+            updateItemStock(iList.root, t);
+        }
+
+        // ---------------------------------------------------------------------
         ftraverse(f);
         f.close();
     }
@@ -189,31 +225,55 @@ class OrderProcessing {
         }
         RandomAccessFile f = new RandomAccessFile(fname, "rw");
         ftraverse(f);
-        //---------------------------------------------------------------------
-        /*You must keep statements pre-given in this function. Your task is to 
-        insert statements here, just after this comment, to complete the 
-        question in the exam paper.*/ 
+        // ---------------------------------------------------------------------
+        /*
+         * You must keep statements pre-given in this function. Your task is to
+         * insert statements here, just after this comment, to complete the
+         * question in the exam paper.
+         */
 
-        //---------------------------------------------------------------------
+        Item t;
+        while ((t = oQueue.deQueue()) != null) {
+            if (t.getName() != null) {
+                updateItemStock(iList.root, t);
+            }
+        }
+        // ---------------------------------------------------------------------
         ftraverse(f);
         f.close();
     }
-    
+
     int countItem(ItemNode root) {
-        //You should write here statements to complete this function.
-        //---------------------------------------------------------------------
-        
-        //---------------------------------------------------------------------
+        // You should write here statements to complete this function.
+        // ---------------------------------------------------------------------
+        int count = 0;
+        ItemNode p = root;
+        while (p != null) {
+            if (p.left != null)
+                count++;
+            if (p.right != null)
+                count++;
+            p = p.right;
+        }
+        // ---------------------------------------------------------------------
         return 0;
     }
-    
-    int sumItemPrice(ItemNode root) { 
-        //You should write here statements to complete this function.
-        //---------------------------------------------------------------------
-        
-        //---------------------------------------------------------------------
+
+    int sumItemPrice(ItemNode root) {
+        // You should write here statements to complete this function.
+        // ---------------------------------------------------------------------
+        if (root == null)
+            return 0;
+
+        int sum = 0;
+        ItemNode p = root;
+        while (p != null) {
+            sum += p.info.getPrice();
+            p = p.right;
+        }
+        // ---------------------------------------------------------------------
         return 0;
-    } 
+    }
 
     void f4() throws Exception {
         load(1);
@@ -225,18 +285,19 @@ class OrderProcessing {
         RandomAccessFile f = new RandomAccessFile(fname, "rw");
         ftraverse(f);
         int s = 0, p = 0;
-        //---------------------------------------------------------------------
-        /*You must keep statements pre-given in this function.
-        Your task is to insert statements here, just after this comment,
-        to complete the question in the exam paper.*/
+        // ---------------------------------------------------------------------
+        /*
+         * You must keep statements pre-given in this function.
+         * Your task is to insert statements here, just after this comment,
+         * to complete the question in the exam paper.
+         */
 
-        
-        //---------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         s = countItem(iList.root);
-        p = sumItemPrice(iList.root);       
+        p = sumItemPrice(iList.root);
         ftraverse(f);
         f.writeBytes("Number of Items: " + s);
-        f.writeBytes("\nTotal value of items: " + p);   
+        f.writeBytes("\nTotal value of items: " + p);
         f.close();
     }
 }
