@@ -238,9 +238,7 @@ class OrderProcessing {
     int sumItemPrice(ItemNode root) {
         if (root == null)
             return 0;
-        return root.info.getQuantity() * root.info.getPrice() +
-                sumItemPrice(root.left) +
-                sumItemPrice(root.right);
+        return root.info.getQuantity() * root.info.getPrice() + sumItemPrice(root.left) + sumItemPrice(root.right);
     }
 
     void f4() throws Exception {

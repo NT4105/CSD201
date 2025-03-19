@@ -83,13 +83,14 @@ class OrderQueue {
     // Remove and return the first order from the queue
     Item deQueue() {
         Item tmp = new Item();
-        if (!isEmpty()) {
+        if (isEmpty()) {
+            return null;
+        }
             tmp = front.info;
             front = front.next;
             if (front == null) {
                 rear = null;
             }
-        }
         return tmp;
     }
 }
