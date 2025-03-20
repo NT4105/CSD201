@@ -89,13 +89,14 @@ class OrderQueue {
         Item tmp = new Item();
         // You should write here appropriate statements to complete this function.
         // --------------------------------------------------------
-        if (!isEmpty()) {
+        if (isEmpty()) {
+            return null;
+        }
             tmp = front.info;
             front = front.next;
             if (front == null) {
                 rear = null;
             }
-        }
         // ---------------------------------------------------------
         return tmp;
     }

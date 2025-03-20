@@ -246,14 +246,11 @@ class OrderProcessing {
     int countItem(ItemNode root) {
         // You should write here statements to complete this function.
         // ---------------------------------------------------------------------
-        int count = 0;
-        ItemNode p = root;
-        while (p != null) {
-            if (p.left != null)
-                count++;
-            if (p.right != null)
-                count++;
-            p = p.right;
+        while (root != null) {
+            int leftCount = countItem(root.left);
+            int rightCount = countItem(root.right);
+            int count = 1 + leftCount + rightCount;
+        return count;
         }
         // ---------------------------------------------------------------------
         return 0;
@@ -262,14 +259,12 @@ class OrderProcessing {
     int sumItemPrice(ItemNode root) {
         // You should write here statements to complete this function.
         // ---------------------------------------------------------------------
-        if (root == null)
-            return 0;
-
-        int sum = 0;
-        ItemNode p = root;
-        while (p != null) {
-            sum += p.info.getPrice();
-            p = p.right;
+        while (root != null) { 
+            int currentValue = root.info.getQuantity() * root.info.getPrice();
+            int leftSum = sumItemPrice(root.left);
+            int rightSum = sumItemPrice(root.right);
+            int sum = currentValue + leftSum + rightSum;
+        return sum;
         }
         // ---------------------------------------------------------------------
         return 0;
@@ -291,7 +286,12 @@ class OrderProcessing {
          * Your task is to insert statements here, just after this comment,
          * to complete the question in the exam paper.
          */
-
+        while (!oQueue.isEmpty()) {
+            Item t = oQueue.deQueue();
+            if (t != null) {
+                this.updateItemStock(iList.root, t);
+            }
+        }
         // ---------------------------------------------------------------------
         s = countItem(iList.root);
         p = sumItemPrice(iList.root);
