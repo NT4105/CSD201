@@ -236,7 +236,28 @@ public class MyList {
          */
         // -------------------------------------------------------------------
         // ------ Start your code here----------------------------------------
-
+        Node current = head;
+        Node maxNode = head;
+        while (current != null) {
+            if (current.getInfo().price > maxNode.getInfo().price) {
+                maxNode = current;
+            }
+            current = current.next;
+        }
+        Node prev = null;
+        current = head;
+        while (current != null) {
+            if (current == maxNode) {
+                if (prev == null) {
+                    head = current.next;
+                } else {
+                    prev.next = current.next;
+                }
+                break;
+            }
+            prev = current;
+            current = current.next;
+        }
         // Find the maximum value and its last occurrence
         // Node prev = null, maxPrev = null, maxNode = head;
         // int maxVal = head.getInfo().price;
@@ -275,7 +296,13 @@ public class MyList {
          */
         // -------------------------------------------------------------------
         // ------ Start your code here----------------------------------------
-
+        int count = 0;
+        Node current = head;
+        while (current != null) {
+            count++;
+            current = current.next;
+        }
+        f.writeBytes(count + "");
         // ------ End your code here------------------------------------------
         // -------------------------------------------------------------------
         // ftraverse(f);
