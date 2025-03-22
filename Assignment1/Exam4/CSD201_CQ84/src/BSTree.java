@@ -138,6 +138,18 @@ public class BSTree {
         // ---------------------------------------------------------------------
     }
 
+    int countInternalNodes(Node p, int count) {
+        if (p == null) {
+            return count;
+        }
+        if (p.left != null || p.right != null) {
+            count++;
+        }
+        count = countInternalNodes(p.left, count);
+        count = countInternalNodes(p.right, count);
+        return count;
+    }
+
     // Do not edit this function.
     // Your task is to complete insert function above only.
     void f1() throws Exception {
@@ -160,7 +172,13 @@ public class BSTree {
     public void preOrder2(Node p, RandomAccessFile f) throws Exception {
         // You should insert here statements to complete this function
         // ---------------------------------------------------------------------
-
+        if (p == null) {
+            return;
+        }
+        if (p.info.color < 8) {
+            fvisit(p, f);
+        }
+        preOrder2(p.right, f);
         // ---------------------------------------------------------------------
     }
 
@@ -196,7 +214,7 @@ public class BSTree {
          * to complete the question in the exam paper.
          */
 
-        // preOrder2(root,f);
+        preOrder2(root, f);
 
         // ---------------------------------------------------------------------
         f.writeBytes("\r\n");
@@ -207,7 +225,14 @@ public class BSTree {
     void inOrder2(Node p, RandomAccessFile f) throws Exception {
         // You should insert here statements to complete this function
         // ---------------------------------------------------------------------
-
+        if (p == null) {
+            return;
+        }
+        inOrder2(p.right, f);
+        if (p.info.weight > 2) {
+            fvisit(p, f);
+        }
+        inOrder2(p.left, f);
         // ---------------------------------------------------------------------
     }
 
@@ -241,7 +266,7 @@ public class BSTree {
          * to complete the question in the exam paper.
          */
 
-        // inOrder2(root,f);
+        inOrder2(root, f);
 
         // ---------------------------------------------------------------------
         f.writeBytes("\r\n");
@@ -252,7 +277,14 @@ public class BSTree {
     void printLeafNodes(Node p, RandomAccessFile f) throws Exception {
         // You should insert here statements to complete this function
         // ---------------------------------------------------------------------
-
+        if (p == null) {
+            return;
+        }
+        if (p.left == null && p.right == null) {
+            fvisit(p, f);
+        }
+        printLeafNodes(p.left, f);
+        printLeafNodes(p.right, f);
         // ---------------------------------------------------------------------
     }
 
@@ -282,7 +314,7 @@ public class BSTree {
          * to complete the question in the exam paper.
          */
 
-        // printLeafNodes(root,f);
+        printLeafNodes(root, f);
 
         // ---------------------------------------------------------------------
         f.writeBytes("\r\n");
@@ -318,6 +350,9 @@ public class BSTree {
          * Your task is to insert statements here, just after this comment,
          * to complete the question in the exam paper.
          */
+        int count = 0;
+        count = countInternalNodes(root, count);
+        f.writeBytes(count + "");
 
         // ---------------------------------------------------------------------
         f.close();
