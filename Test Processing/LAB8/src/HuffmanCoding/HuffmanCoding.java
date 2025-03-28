@@ -5,10 +5,6 @@
  */
 package HuffmanCoding;
 
-/**
- *
- * @author ACER
- */
 public class HuffmanCoding {
-    
+
 }
